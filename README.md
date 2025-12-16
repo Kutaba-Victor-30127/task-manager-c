@@ -1,39 +1,58 @@
-# Task Manager în C (consolă)
+# Task Manager în C (CLI)
 
-Aplicație de tip consolă pentru gestionarea task-urilor, scrisă în C, gândită ca proiect de învățare pentru structurarea codului, lucru cu fișiere și validare de input.
+Aplicație de tip consolă pentru gestionarea task-urilor, scrisă în C.  
+Proiect realizat cu scop educațional, axat pe structurarea codului, validarea inputului și lucrul cu fișiere.
+
+---
 
 ## Funcționalități
 
 - Adăugare task cu:
-  - **ID unic** (număr pozitiv, validat – nu acceptă litere)
+  - ID unic (număr pozitiv, validat – nu acceptă litere)
   - titlu
   - descriere
   - prioritate (1–5)
   - deadline (dată calendaristică reală, validată)
-  - status: `TODO / IN_PROGRESS / BLOCKED / DONE`
+  - status: TODO / IN_PROGRESS / BLOCKED / DONE
   - timp estimat (minute)
+
 - Afișare toate task-urile
 - Ștergere task după ID
 - Editare task existent
 - Sortare:
   - după prioritate (descrescător)
   - după deadline (crescător)
-- Persistență:
-  - task-urile sunt salvate în `data/tasks.dat`
-  - se încarcă automat la pornirea programului
-  - se salvează automat după adăugare / ștergere / editare
+- Căutare task-uri după titlu sau descriere (case-insensitive)
+- Afișare task-uri filtrate după status
+
+---
+
+## Persistență date
+
+- Task-urile sunt salvate în fișierul `data/tasks.dat`
+- Se încarcă automat la pornirea aplicației
+- Se salvează automat la:
+  - adăugare
+  - editare
+  - ștergere
+
+---
 
 ## Structura proiectului
 
-```text
 TASK MANAGER/
 ├── src/
-│   ├── main.c            # logica meniului + validare input
-│   ├── task.h            # definiția Task, Date, TaskStatus
-│   ├── task.c            # createTask, printTask
-│   ├── task_list.h       # structura TaskList + prototipuri
-│   ├── task_list.c       # add, delete, edit, sort, existsTaskId
-│   ├── task_storage.h    # prototipuri pentru load/save
-│   ├── task_storage.c    # salvare/încărcare în fișier binar
-└── data/
-    └── tasks.dat         # fișierul cu task-uri (generat la rulare)
+│ ├── main.c # meniu principal + flow aplicație
+│ ├── task.h # structuri Task, Date, TaskStatus
+│ ├── task.c # creare + afișare task
+│ ├── task_list.h # structura TaskList
+│ ├── task_list.c # add / delete / edit / sort / search
+│ ├── task_storage.h # salvare / încărcare fișier
+│ ├── task_storage.c
+│ ├── input_utils.h # validare input numeric și date
+│ └── input_utils.c
+├── data/
+│ └── tasks.dat # fișier generat la rulare
+├── Makefile
+├── README.md
+└── .gitignore
