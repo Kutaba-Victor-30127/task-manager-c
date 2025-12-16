@@ -1,33 +1,28 @@
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
+#include "input_utils.h"
+#include "task.h"
 #include "task_list.h"
 
-// ==== Validare data pentru editare ====
-static int isLeapYearInt(int year) {
-    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
-}
+static int containsIgnoreCase(const char *str,const char *sub){
+    if (!str || !sub) return 0;
+    size_t str_len = strlen(str);
+    size_t sub_len = strlen(sub);
 
-static int isValidDateInt(int day, int month, int year) {
-    if (year < 1900 || year > 2100) return 0;
-    if (month < 1 || month > 12)   return 0;
-    if (day < 1)                   return 0;
+    if (!sub_len || sub_len>str_len) return 0;
 
-    int daysInMonth;
-
-    switch (month) {
-        case 1: case 3: case 5: case 7: case 8: case 10: case 12:
-            daysInMonth = 31; break;
-        case 4: case 6: case 9: case 11:
-            daysInMonth = 30; break;
-        case 2:
-            daysInMonth = isLeapYearInt(year) ? 29 : 28;
-            break;
-        default:
-            return 0;
+    for (size_t i=0;i<str_len-sub_len;i++){
+        size_t j = 0;
+        while (j<sub_len){
+            char c1 = (char)tolower((unsigned char)str[i+j]);
+            char c2 = (char)tolower((unsigned char)sub[j]);
+            if (c1 != c2) break;
+            j++;
+        }
+        if (j == sub_len) return 1;
     }
-
-    if (day > daysInMonth) return 0;
-    return 1;
+    return 0;
 }
 
 int existsTaskId(TaskList *list, int id) {
@@ -66,7 +61,7 @@ void deleteTask(TaskList *list, int id){
         }
     }
     if (found == -1){
-        printf("Taskul cu id %d nu a fost gasit\n");
+        printf("Taskul cu id %d nu a fost gasit\n",id);
         return;
     }
 
@@ -95,47 +90,26 @@ void editTask(TaskList *list, int id) {
     Task *t = &list->tasks[index];
 
     printf("Titlu nou: ");
-    fgets(t->title, TITLE_LEN, stdin);
-    t->title[strcspn(t->title, "\n")] = '\0';
+    if (!fgets(t->title, TITLE_LEN, stdin)){
+        printf("Eroare la citire titlu!\n");
+        return;
+    }
+    t->title[strcspn(t->title, "\r\n")] = '\0';
 
     printf("Descriere noua: ");
-    fgets(t->description, DESC_LEN, stdin);
-    t->description[strcspn(t->description, "\n")] = '\0';
-
-    printf("Prioritate noua (1-5): ");
-    scanf("%d", &t->priority);
-
-    int day, month, year;
-    int c;
-
-    //  aici facem VALIDAREA datei
-    while (1) {
-        printf("Deadline nou (zi luna an): ");
-        if (scanf("%d %d %d", &day, &month, &year) != 3) {
-            printf("Input invalid. Introdu 3 numere (zi luna an).\n");
-            while ((c = getchar()) != '\n' && c != EOF) {}
-            continue;
-        }
-
-        while ((c = getchar()) != '\n' && c != EOF) {}
-
-        if (!isValidDateInt(day, month, year)) {
-            printf("Data invalida. Introdu o data calendaristica reala.\n");
-            continue;
-        }
-
-        // data e valida -> o salvam
-        t->deadline.day   = day;
-        t->deadline.month = month;
-        t->deadline.year  = year;
-        break;
+    if (!fgets(t->description, DESC_LEN, stdin)){
+        printf("Eroare la citire descriere!\n");
+        return;
     }
+    t->description[strcspn(t->description, "\r\n")] = '\0';
 
-    printf("Status nou (0=TODO,1=IN_PROGRESS,2=BLOCKED,3=DONE): ");
-    scanf("%d", (int *)&t->status);
+    t->priority = readIntInRange("Prioritate noua (1-5): ",1,5);
 
-    printf("Timp estimat nou (minute): ");
-    scanf("%d", &t->estimatedMinutes);
+    t->deadline = readDate();
+    
+    t->status = readIntInRange("Status nou (0=TODO,1=IN_PROGRESS,2=BLOCKED,3=DONE): ",0,3);
+
+    t->estimatedMinutes = readIntInRange("Timpul nou estimat: ",1,1000);
 
     printf("Task modificat cu succes!\n");
 }
@@ -182,4 +156,46 @@ void printAllTasks(const TaskList *list){
     {
        printTask(&list->tasks[i]);
     }
+}
+
+void searchTaskByTitle(const TaskList *list,const char *query){
+    if (!list || list->count ==0){
+        printf("Nu exista Task-uri\n");
+        return; 
+    }
+    if (!query || query[0] == '\0'){
+        printf("Cuvantul de cautare este gol\n");
+        return;
+    }
+    int found =0;
+    for (int i=0;i<list->count;i++){
+        const Task *t = &list->tasks[i];
+        if (containsIgnoreCase(t->title,query) || containsIgnoreCase(t->description,query)){
+            printTask(t);
+            found = 1;
+        } 
+    }
+        if (!found){
+        printf("Nu a fost gasit niciun task care sa contina \"%s\".\n", query);
+        }
+    
+}
+
+void printTaskByStatus(const TaskList *list,TaskStatus status){
+    if(!list || list->count == 0){
+        printf("Nu exista task-uri\n");
+        return;
+    }
+    int found = 0;
+
+    for (int i=0;i<list->count;i++){
+        if (list->tasks[i].status == status){
+            printTask(&list->tasks[i]);
+            found = 1;
+        }
+    }
+    if (!found){
+        printf("Nu exista task-uri cu statusul selectat\n");
+    }
+
 }

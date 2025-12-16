@@ -30,6 +30,7 @@ typedef struct {
 } Task;
 
 void printTask(const Task *t);
+Date readDate(void);
 
 Task createTask(int id,
                 const char *title,

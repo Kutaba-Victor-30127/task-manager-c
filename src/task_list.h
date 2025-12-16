@@ -18,5 +18,7 @@ void editTask(TaskList *list, int id);
 void sortTasksByPriority(TaskList *list);
 void sortTasksByDeadline(TaskList *list);
 void printAllTasks(const TaskList *list);
+void searchTaskByTitle(const TaskList *list,const char *query);
+void printTaskByStatus(const TaskList *list,TaskStatus status);
 
 #endif
