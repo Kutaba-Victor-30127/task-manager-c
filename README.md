@@ -1,58 +1,98 @@
-# Task Manager în C (CLI)
+# Task Manager in C (CLI)
 
-Aplicație de tip consolă pentru gestionarea task-urilor, scrisă în C.  
-Proiect realizat cu scop educațional, axat pe structurarea codului, validarea inputului și lucrul cu fișiere.
+A console-based task management application written in C.
 
----
+This project was built for educational purposes, focusing on clean code organization, input validation, file persistence, and modular software design.
 
-## Funcționalități
+## Features
 
-- Adăugare task cu:
-  - ID unic (număr pozitiv, validat – nu acceptă litere)
-  - titlu
-  - descriere
-  - prioritate (1–5)
-  - deadline (dată calendaristică reală, validată)
-  - status: TODO / IN_PROGRESS / BLOCKED / DONE
-  - timp estimat (minute)
+### Task Creation
 
-- Afișare toate task-urile
-- Ștergere task după ID
-- Editare task existent
-- Sortare:
-  - după prioritate (descrescător)
-  - după deadline (crescător)
-- Căutare task-uri după titlu sau descriere (case-insensitive)
-- Afișare task-uri filtrate după status
+Create tasks with:
 
----
+* Unique ID (positive integer, validated)
+* Title
+* Description
+* Priority (1–5)
+* Deadline (validated calendar date)
+* Status:
 
-## Persistență date
+  * TODO
+  * IN_PROGRESS
+  * BLOCKED
+  * DONE
+* Estimated time (minutes)
 
-- Task-urile sunt salvate în fișierul `data/tasks.dat`
-- Se încarcă automat la pornirea aplicației
-- Se salvează automat la:
-  - adăugare
-  - editare
-  - ștergere
+### Task Management
 
----
+* View all tasks
+* Delete tasks by ID
+* Edit existing tasks
+* Search tasks by title or description (case-insensitive)
+* Filter tasks by status
 
-## Structura proiectului
+### Sorting
 
-TASK MANAGER/
+* Sort by priority (descending)
+* Sort by deadline (ascending)
+
+## Data Persistence
+
+Tasks are stored in:
+
+```text
+data/tasks.dat
+```
+
+The application:
+
+* Loads tasks automatically on startup
+* Saves tasks automatically after:
+
+  * creating a task
+  * editing a task
+  * deleting a task
+
+## Project Structure
+
+```text
+TASK-MANAGER/
+│
 ├── src/
-│ ├── main.c # meniu principal + flow aplicație
-│ ├── task.h # structuri Task, Date, TaskStatus
-│ ├── task.c # creare + afișare task
-│ ├── task_list.h # structura TaskList
-│ ├── task_list.c # add / delete / edit / sort / search
-│ ├── task_storage.h # salvare / încărcare fișier
-│ ├── task_storage.c
-│ ├── input_utils.h # validare input numeric și date
-│ └── input_utils.c
+│   ├── main.c              # Main menu and application flow
+│   ├── task.h              # Task, Date and TaskStatus structures
+│   ├── task.c              # Task creation and display
+│   ├── task_list.h         # TaskList structure
+│   ├── task_list.c         # Add, delete, edit, sort and search operations
+│   ├── task_storage.h      # File save/load functionality
+│   ├── task_storage.c
+│   ├── input_utils.h       # Input and date validation
+│   └── input_utils.c
+│
 ├── data/
-│ └── tasks.dat # fișier generat la rulare
+│   └── tasks.dat           # Generated data file
+│
 ├── Makefile
 ├── README.md
 └── .gitignore
+```
+
+## Technologies
+
+* C
+* File I/O
+* Dynamic memory management
+* Modular programming
+* Makefile
+* Git
+
+## Learning Objectives
+
+This project was created to practice:
+
+* Structured programming in C
+* Modular software architecture
+* Data validation
+* File persistence
+* Separation of responsibilities
+* Building medium-sized console applications
